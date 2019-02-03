@@ -46,8 +46,7 @@ Abelson, Sussman, [_SICP_, book/course 6.037 MIT](https://web.mit.edu/alexmv/6.0
 Very close to lambda Calculus
 
 ```clojure
-
-    ((fn [x] (+ x 1))  y)   ; --β--> (+ x y)
+((fn [x] (+ x 1))  y)   ; --β--> (+ x y)
 ```
 
 Defining named functions `def` + `fn` in a namespace
@@ -67,7 +66,8 @@ Code is Data, Data is Code
 ```clojure
 (+ 1 2 3)
 
-(list? '(+ 1 2 3)) ; quote to make code inert
+; quote to make code inert
+(list?  '(+ 1 2 3))
 
 (1 2 3)
 
@@ -79,7 +79,7 @@ Code is Data, Data is Code
 ```
 See also https://clojure.org/reference/evaluation and https://clojure.org/reference/reader
 
-* Macros
+* Macros (functions returning inert code)
 
 ```clojure
 
@@ -129,6 +129,7 @@ See also https://clojure.org/reference/evaluation and https://clojure.org/refere
 ; 🚨  immutably 🚨
 
 a-map
+; i.e. original left intact
 
 (let [m  (assoc a-map :a 3)
       m' (assoc m :b 0)]
@@ -139,10 +140,7 @@ a-map
     (assoc :b 0)
     (assoc :c 2))
 
-(def m {:a [1
-            2
-            {:foo 3}
-            4]})
+(def m {:a [1 2 {:foo 3} 4]})
 
 (get-in    m [:a 2 :foo])
 
@@ -158,11 +156,10 @@ a-map
 (keep a-set [1 :d 3 :e :f :g])
 ```
 
-* Fusion of Folds (Transducers)
+* Operation on Collections / Fold Fusion (Transducers)
 See also https://nextjournal.com/zampino/fold
 
 ```clojure
-(reduce + 0 [1 2 3 4])
 
 (def coll
      [{:a 1}
@@ -173,14 +170,33 @@ See also https://nextjournal.com/zampino/fold
       {:a 6}
       {:a 7}])
 
-(reduce + 0 (map :a coll))
+(filter odd? (map :a coll))
+
 (reduce + 0 (filter odd? (map :a coll)))
+
+(reduce + 0 [1 2 3 4])
 
 (let [xf (comp
           (map :a)
           (filter odd?))]
 
   (reduce (xf +) 0 coll))
+```
+
+* Control Flow, Conditionals
+
+```clojure
+(if true :ok :ko)
+
+(let [x 4]
+  (cond
+    (odd? x)  (-> x (+ 1) (/ 2))
+    (even? x) (/ x 2)))
+
+(let [p1 false p2 true]
+  (cond-> {:a 1}
+    p1 (assoc :b 2)
+    p2 (assoc :c 3)))
 ```
 
 * Polymorphism (multi-methods, records, protocols)
@@ -214,12 +230,25 @@ See also https://nextjournal.com/zampino/fold
 
 ```
 
+* Metadata
+
+```clojure
+
+(def a (with-meta [1 2 3] {:safe true}))
+(def b {:a a :b 1})
+(-> b
+    (update :a conj 4)
+    (get :a)
+    meta)
+```
+
 * Java Interop
+
 ```clojure
 (java.util.Date.)
 (java.util.UUID/randomUUID)
 
-;  🤭  mutable!!! 🤭
+;  🤭  mutable?! 🤭
 (def ja (java.util.ArrayList.))
 (.add ja 1)
 ja

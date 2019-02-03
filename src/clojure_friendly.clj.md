@@ -1,9 +1,11 @@
 ```clojure
 (ns clojure-friendly
+    "A functional friendly Introduction to Clojure: a lispy Java"
+  ; (:require [high.confusion.threshold]
+  ;           [some.programming.experience])
   (:require [clojure.spec.alpha :as s]
             [clojure.core.async :as async]))
 ```
-# A functional friendly Introduction to Clojure: a lispy Java
 _Andrea Amantini_ (@usenextjournal)
 - tw: @lo_zampino
 - gh: @zampino ([zampino/clojure-friendly](https://github.com/zampino/clojure-friendly))
@@ -20,8 +22,7 @@ _Andrea Amantini_ (@usenextjournal)
 
 * designed for Concurrency
 
-Rich Hickey, [clojure rationale](https://clojure.org/about/rationale)
-Rich Hickey, [Simple made Easy](https://www.infoq.com/presentations/Simple-Made-Easy)
+Rich Hickey, [clojure rationale](https://clojure.org/about/rationale), [Simple made Easy](https://www.infoq.com/presentations/Simple-Made-Easy)
 
 ## LIS(t) P(rocessor)
 > A programming system called LISP has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T. to facilitate experiments with a proposed system called the Advice Taker, whereby a machine could be instructed to handle sentences and could exhibit “common sense” in carrying out its instructions...
@@ -67,13 +68,15 @@ Code is Data, Data is Code
 ```clojure
 (+ 1 2 3)
 
-(list? '(+ 1 2 3))
+(list? '(+ 1 2 3)) ; quote to make inert code
 
 (1 2 3)
 
 (eval '(+ 1 2 3))
+
 (eval (cons '+ '(1 2 3)))
-;; In Python thiw would be eval(compile("1 + 2 + 3", '<input>', 'eval'))
+
+;; In Python this would be eval(compile("1 + 2 + 3", '<input>', 'eval'))
 ```
 See also https://clojure.org/reference/evaluation
 

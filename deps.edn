@@ -4,7 +4,8 @@
   org.clojure/clojurescript {:mvn/version "1.10.439"}
   org.clojure/test.check {:mvn/version "0.10.0-alpha3"}
   org.clojure/core.match {:mvn/version "0.3.0-alpha5"}
-  org.clojure/core.async {:mvn/version "0.4.490"}}
+  org.clojure/core.async {:mvn/version "0.4.490"}
+  org.clojure/spec.alpha {:mvn/version "0.2.176"}}
 
  :aliases
  {:dev

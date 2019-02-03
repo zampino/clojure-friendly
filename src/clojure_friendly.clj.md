@@ -1,12 +1,12 @@
 ```clojure
 (ns clojure-friendly
-  (:require [clojure.core.match :refer [match]]
+  (:require [clojure.spec.alpha :as s]
             [clojure.core.async :as async]))
 ```
-## Introduction to Clojure, the lispy Java
+## Introduction to Clojure, a lispy Java
 _Andrea Amantini_
-- tw: lo_zampino
-- gh: zampino (zampino/clojure-friendly)
+- tw: @lo_zampino (@usenextjournal)
+- gh: @zampino (zampino/clojure-friendly)
 
 ## Why Clojure
 
@@ -20,16 +20,16 @@ _Andrea Amantini_
 
 * designed for Concurrency
 
-[Rich Hickey, clojure rationale](https://clojure.org/about/rationale)
-[Rich Hickey, Simple made Easy](https://www.infoq.com/presentations/Simple-Made-Easy)
+Rich Hickey, [clojure rationale](https://clojure.org/about/rationale)
+Rich Hickey, [Simple made Easy](https://www.infoq.com/presentations/Simple-Made-Easy)
 
 ----
 ### LIS(t) P(rocessor)
 > A programming system called LISP (for LISt Processor) has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T. The system was designed to facilitate experiments with a proposed system called the Advice Taker, whereby a machine could be instructed to handle declarative as well as imperative sentences and could exhibit “common sense” in carrying out its instructions...
 
 John McCarthy, [_Recursive Functions of Symbolic Expressions and Their Computation by Machine_, 1960](http://www-formal.stanford.edu/jmc/recursive.pdf)
-
 Paul Graham, [Roots of Lisp](http://paulgraham.com/rootsoflisp.html)
+[Differences to Clojure](https://clojure.org/reference/lisps)
 
 Try to give _common sense_ to expressions as
 
@@ -40,25 +40,28 @@ Try to give _common sense_ to expressions as
 (f arg_1 arg_2 ... arg_n)
 ```
 
-Very close to Church's lambda Calculus
+Very close to lambda Calculus
 
 ```clojure
 
-  ((fn [x] (+ x 1))  2)
+  ((fn [x] (+ x 1))  y)   -β->   (+ x y)
 ```
 
 Defining functions `def` + `fn` in ns
 
 ```clojure
 
-(defn say [x] (str "say: " x))
-(def hi "Hello Clojure λ")
+(defn say [x]
+  (str "say: " x))
+
+(def hi "Hello Clojure 👋")
 
 (say hi)
+
 (clojure-friendly/say hi)
 ```
 
-___Clojure is omoiconic i.e. Data is Code is Data___
+Clojure is omoiconic i.e. Data is Code is Data
 
 ```clojure
 (+ 1 2 3)
@@ -66,7 +69,11 @@ ___Clojure is omoiconic i.e. Data is Code is Data___
 (list? '(+ 1 2 3))
 
 (1 2 3)
+
+(eval '(+ 1 2 3))
+;; In Python thiw would be eval( parse "1 + 2 + 3")
 ```
+See also https://clojure.org/reference/evaluation
 
 * Macros
 
@@ -74,7 +81,7 @@ ___Clojure is omoiconic i.e. Data is Code is Data___
 
 (defmacro λ [x term] `(fn [~x] ~term))
 
-((λ x (+ x 1)) 5)
+((λ x (+ x 1)) 2)
 ```
 
 * Functions are first class
@@ -87,13 +94,14 @@ ___Clojure is omoiconic i.e. Data is Code is Data___
 ((adder 41) 1)
 
 ((partial + 41) 1)
-(defn fivetuple
-  (comp (partial)))
 
-(every-pred odd? (partial = 0))
-
-(def mod-3-or-5 (some-fn
-                       (partial mod 3)))
+(def p (every-pred odd?
+                   (comp ; is a multiple of 3?
+                     (partial = 0)
+                     (fn [n] (mod n 3)))))
+(p 2)
+(p 5)
+(p 9)
 ```
 
 * Immutability / Navigation / Transformations of Data Structures
@@ -101,26 +109,40 @@ ___Clojure is omoiconic i.e. Data is Code is Data___
 ```clojure
 ; sequential colls
 (def a-vector [:a :b :c 1 "foo"])
-(def a-list (list :a :b :c))
+
+(def a-list '(:a :b :c 1 "foo"))
+
 ; hashed colls
-(def a-map {:a 1 :b 2 :c 3})
+(def a-map {:a 1 :b 2 "foo" 3})
+
 (def a-set #{:a :b :c :d :e})
 
 (:a a-map)
+
 (a-map :a)
-(:d a-map 4)
-(get a-map :a)
 
-(a-vector 0)
-(a-vector 5)
+(assoc a-map :d 4)
+; 🚨  immutably 🚨
 
-(conj m [:d 4] [:e 5])
-; show-docs
-(assoc m :d 4 :e)
-; immutably
-m
+a-map
 
-(keep a-set [1 :d 3 :e :f :g])
+(let [m  (assoc a-map :a 3)
+      m' (assoc m :b 0)]
+  (assoc m' :c 2))
+
+(-> a-map
+    (assoc :a 3)
+    (assoc :b 0)
+    (assoc :c 2))
+
+(def m {:a [1
+            2
+            {:foo 3}
+            4]})
+
+(get-in    m [:a 2 :foo])
+
+(update-in m [:a 2 :foo] + 100)
 
 (conj a-vector "bar")
 (conj a-list "foo")
@@ -129,18 +151,35 @@ m
 (filter (comp odd? :a)
         [{:a 1} {:a 2} {:a 3}])
 
-(let [m  (assoc a-map :a 3)
-      m' (assoc m' :b 0)]
-  (assoc m' :c 2))
-
-(-> a-map
-    (assoc :a 3)
-    (assoc :b 0)
-    (assoc :c 2))
-
+(keep a-set [1 :d 3 :e :f :g])
 ```
 
-* Polymorphism (multimethods, records, protocols)
+* Fusion of Folds (Transducers)
+See also https://nextjournal.com/zampino/fold
+
+```clojure
+(reduce + 0 [1 2 3 4])
+
+(def coll
+     [{:a 1}
+      {:a 2 :bad true}
+      {:a 3}
+      {:a 4}
+      {:a 5 :stop :here}
+      {:a 6}
+      {:a 7}])
+
+(reduce + 0 (map :a coll))
+(reduce + 0 (filter odd? (map :a coll)))
+
+(let [xf (comp
+          (map :a)
+          (filter odd?))]
+
+  (reduce (xf +) 0 coll))
+```
+
+* Polymorphism (multi-methods, records, protocols)
 
 ```clojure
 (defmulti handle :event)
@@ -160,55 +199,111 @@ m
 
 (handle context)
 
-```
+;; context (map) overloading
+(-> context
+    (ns1/transform input-1)
+    (ns2/transform input-2)
 
+    ...
 
-* IFn interface
-
-```clojure
-
-(def a [1 2 3])
-
-(conj a 4)
-
-a
+    (ns-n/transform input-n))
 
 ```
-* Lazyness
-
-```clojure
-
-(defn log-inc [x] (println (str "increasing: " x)) (inc x))
-
-(let [v (list 1 2 3)
-      w (map log-inc v)]
-  (println "printing is realising")
-  w)
-```
-
-* Composing Folds (Transducers)
-
 
 * Java Interop
+```clojure
+(java.util.Date.)
+(java.util.UUID/randomUUID)
 
+;  🤭  mutable!!! 🤭
+(def ja (java.util.ArrayList.))
+(.add ja 1)
+ja
+(type ja)
+```
 
-* Mutation (Java, Vars, Refs, Agent, Atoms)
+* Safe State Mutation (Vars, Atoms, Refs, Agents)
 
 ```clojure
+(def store (atom []))
+(deref store) ; (@store)
 
-(def ja (java.util.ArrayList.))
+(defn add [store input]
+  ;; 🚨 Don't do side effects here
+  (println "trying insert value: " input)
+  (Thread/sleep 500)
+  (conj store input))
 
-(.add ja 1)
+(async/thread
+  (println "Thread 1 sees: " @store)
+  (swap! store add :x)
+  (println "Thread 1 Succeds"))
 
-ja
+(async/thread
+  (Thread/sleep 501)
+  (println "Thread 2 sees: " @store)
+  (swap! store add :y)
+  (println "Thread 2 Succeds"))
+
+(async/thread
+  (println "Thread 3 sees: " @store)
+  (swap! store add :z)
+  (println "Thread 3 Succeds"))
+
+
+(deref store)
+```
+
+* Concurrency (Delays, Futures, Promises, core.async CSP)
+```clojure
+
+(def c (async/chan))
+(async/go
+  (loop [state []]
+    (if-some [val (async/<! c)]
+      (do (println "Message In: " val)
+          (recur (conj state val)))
+      (println "Go Loop Done! " state))))
+
+(async/go (async/>! c :there))
+(async/close! c)
+```
+
+### Extras
+
+* Clojure Spec Alpha
+
+```clojure
+(s/def ::name (s/and string?
+                     (s/conformer clojure.string/reverse
+                                  clojure.string/reverse)))
+
+(s/def ::code (s/and integer? odd?))
+
+(s/def ::seq (s/+ ::code))
+
+(s/def ::object (s/keys :req [::name ::seq]))
+
+(def object {::name "a@b.c"
+             ::seq (list 3 15 1 3])
+
+(s/valid? ::object object)
+
+(s/def ::object.new (s/keys :req [::name
+                                  ::seq
+                                  ::code]))
+
+(s/def ::object.now (s/or :v2 ::object.new
+                          :v1 ::object))
+
+(def object' (assoc object ::code 2))
+
+(s/conform ::object.now object)
+(s/conform ::object.now object')
+(s/explain-data ::object.now object')
 
 ```
 
-* Concurrency
-
-
-
-### Extras
 
 * Fn arity overloading / destructuring.
 
@@ -230,4 +325,16 @@ ja
 (do-this "HI")
 (do-this "HI" {:pref "Here"})
 (do-this "HI" {:pref "Here"} :a :b :c)
+```
+
+* Lazyness
+
+```clojure
+
+(defn log-inc [x] (println (str "increasing: " x)) (inc x))
+
+(let [v (list 1 2 3)
+      w (map log-inc v)]
+  (println "printing is realising")
+  w)
 ```

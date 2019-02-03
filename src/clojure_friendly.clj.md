@@ -6,33 +6,33 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.core.async :as async]))
 ```
-_Andrea Amantini_ (@usenextjournal)
-- tw: @lo_zampino
-- gh: @zampino ([zampino/clojure-friendly](https://github.com/zampino/clojure-friendly))
+_Andrea Amantini_ ([@usenextjournal](https://twitter.com/usenextjournal))
+- tw: [@lo_zampino](https://twitter.com/lo_zampino)
+- gh: [@zampino](https://github.com/zampino) ([zampino/clojure-friendly](https://github.com/zampino/clojure-friendly))
 
 ## Why Clojure?
 
 * A dynamic language/environment ([REPL driven dev](https://clojure.org/about/dynamic))
 
-* a Lisp dialect
+* a [LISP dialect](https://clojure.org/about/lisp) (code as data)
 
-* for functional Programming, immutable Data Structures
+* for [functional Programming](https://clojure.org/about/functional_programming), immutable Data Structures
 
-* symbiotic with an established Platform (JVM)
+* symbiotic with [an established Platform](https://clojure.org/about/jvm_hosted) (JVM)
 
 * designed for Concurrency
 
-Rich Hickey, [clojure rationale](https://clojure.org/about/rationale), [Simple made Easy](https://www.infoq.com/presentations/Simple-Made-Easy)
+Rich Hickey, _[Clojure rationale](https://clojure.org/about/rationale)_ or _[Simple made easy](https://www.infoq.com/presentations/Simple-Made-Easy)_ for inspiration
 
 ## LIS(t) P(rocessor)
-> A programming system called LISP has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T. to facilitate experiments with a proposed system called the Advice Taker, whereby a machine could be instructed to handle sentences and could exhibit “common sense” in carrying out its instructions...
+> LISP has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T. to facilitate experiments with a proposed system called the Advice Taker, whereby a machine could be instructed to handle sentences and could exhibit “common sense” in carrying out its instructions...
 
-John McCarthy, [_Recursive Functions of Symbolic Expressions and Their Computation by Machine_, 1960](http://www-formal.stanford.edu/jmc/recursive.pdf) (see also Paul Graham, [Roots of Lisp](http://paulgraham.com/rootsoflisp.html))
+John McCarthy, [_Recursive Functions of Symbolic Expressions and Their Computation by Machine_, 1960](http://www-formal.stanford.edu/jmc/recursive.pdf) (see also Paul Graham, [_Roots of Lisp_](http://paulgraham.com/rootsoflisp.html))
 
 
-> we never formally teach the language, because we don’t have to. We just use it! The great advantage of Lisp-like languages is... very few ways of forming compound expressions, and almost no syntactic structure...
+> we never formally teach the language, because we don’t have to. We just use it! The great advantage of Lisp-like languages is its very few ways of forming compound expressions, and almost no syntactic structure...
 
-Abelson, Sussman, [_SICP_](https://web.mit.edu/alexmv/6.037/sicp.pdf)
+Abelson, Sussman, [_SICP_, book/course 6.037 MIT](https://web.mit.edu/alexmv/6.037/sicp.pdf)
 
 ...give _common sense_ to expressions like
 
@@ -47,14 +47,13 @@ Very close to lambda Calculus
 
 ```clojure
 
-  ((fn [x] (+ x 1))  y)   -β->   (+ x y)
+    ((fn [x] (+ x 1))  y)   ; --β--> (+ x y)
 ```
 
-Defining functions `def` + `fn` in ns
+Defining named functions `def` + `fn` in a namespace
 
 ```clojure
-(defn say [x]
-  (str "say: " x))
+(defn say [x] (str "say: " x))
 
 (def hi "Hello Clojure 👋")
 
@@ -68,7 +67,7 @@ Code is Data, Data is Code
 ```clojure
 (+ 1 2 3)
 
-(list? '(+ 1 2 3)) ; quote to make inert code
+(list? '(+ 1 2 3)) ; quote to make code inert
 
 (1 2 3)
 
@@ -78,7 +77,7 @@ Code is Data, Data is Code
 
 ;; In Python this would be eval(compile("1 + 2 + 3", '<input>', 'eval'))
 ```
-See also https://clojure.org/reference/evaluation
+See also https://clojure.org/reference/evaluation and https://clojure.org/reference/reader
 
 * Macros
 

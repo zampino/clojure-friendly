@@ -150,35 +150,33 @@ a-map
 (conj a-list "foo")
 (conj a-set 1)
 
-(filter (comp odd? :a)
-        [{:a 1} {:a 2} {:a 3}])
-
-(keep a-set [1 :d 3 :e :f :g])
 ```
 
 * Operation on Collections / Fold Fusion (Transducers)
 See also https://nextjournal.com/zampino/fold
 
 ```clojure
-
 (def coll
      [{:a 1}
       {:a 2}
-      {:a 3}
+      {:a 3 :bad true}
       {:a 4}
-      {:a 5}
+      {:a 5 :stop :here}
       {:a 6}
       {:a 7}])
 
-(filter odd? (map :a coll))
-
-(reduce + 0 (filter odd? (map :a coll)))
+(filter odd?
+        (map :a coll))
 
 (reduce + 0 [1 2 3 4])
 
+(reduce + 0 (filter odd? (map :a coll)))
+
 (let [xf (comp
-          (map :a)
-          (filter odd?))]
+           (remove :bad)
+           (take-while (comp not :stop))
+           (map :a))]
+           ; (filter odd?))]
 
   (reduce (xf +) 0 coll))
 ```
@@ -245,6 +243,7 @@ See also https://nextjournal.com/zampino/fold
 * Java Interop
 
 ```clojure
+
 (java.util.Date.)
 (java.util.UUID/randomUUID)
 
@@ -337,8 +336,21 @@ ja
 
 ```
 
+* Recur (no tail call optimization in Java)
 
-* Fn arity overloading / destructuring.
+```clojure
+
+(defn recall [n]
+  (cond
+    (odd? n) n
+    (< n 10) (recur (+ n 2))
+    (= n 10) :ok))
+
+(recall 2)
+
+```
+
+* Fn arity overloading / destructuring
 
 ```clojure
 

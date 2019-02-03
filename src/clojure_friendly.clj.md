@@ -3,14 +3,14 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.core.async :as async]))
 ```
-# A friendly Introduction to Clojure: a lispy Java
+# A functional friendly Introduction to Clojure: a lispy Java
 _Andrea Amantini_ (@usenextjournal)
 - tw: @lo_zampino
-- gh: @zampino (zampino/clojure-friendly)
+- gh: @zampino ([zampino/clojure-friendly](https://github.com/zampino/clojure-friendly))
 
 ## Why Clojure?
 
-* A dynamic language/environment (REPL driven dev)
+* A dynamic language/environment ([REPL driven dev](https://clojure.org/about/dynamic))
 
 * a Lisp dialect
 
@@ -23,15 +23,15 @@ _Andrea Amantini_ (@usenextjournal)
 Rich Hickey, [clojure rationale](https://clojure.org/about/rationale)
 Rich Hickey, [Simple made Easy](https://www.infoq.com/presentations/Simple-Made-Easy)
 
-----
-### LIS(t) P(rocessor)
-> A programming system called LISP (for LISt Processor) has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T. The system was designed to facilitate experiments with a proposed system called the Advice Taker, whereby a machine could be instructed to handle declarative as well as imperative sentences and could exhibit “common sense” in carrying out its instructions...
+## LIS(t) P(rocessor)
+> A programming system called LISP has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T. to facilitate experiments with a proposed system called the Advice Taker, whereby a machine could be instructed to handle sentences and could exhibit “common sense” in carrying out its instructions...
 
 John McCarthy, [_Recursive Functions of Symbolic Expressions and Their Computation by Machine_, 1960](http://www-formal.stanford.edu/jmc/recursive.pdf) (see also Paul Graham, [Roots of Lisp](http://paulgraham.com/rootsoflisp.html))
 
-> "we never formally teach the language, because we don’t have to. We just use it! ... the great advantage of Lisp-like languages [they have] ...very few ways of forming compound expressions, and almost no syntactic structure..."
 
-Abelson, Sussman, [SICP](https://web.mit.edu/alexmv/6.037/sicp.pdf)
+> we never formally teach the language, because we don’t have to. We just use it! The great advantage of Lisp-like languages is... very few ways of forming compound expressions, and almost no syntactic structure...
+
+Abelson, Sussman, [_SICP_](https://web.mit.edu/alexmv/6.037/sicp.pdf)
 
 ...give _common sense_ to expressions like
 
@@ -39,7 +39,7 @@ Abelson, Sussman, [SICP](https://web.mit.edu/alexmv/6.037/sicp.pdf)
 
 ((a b) (c (d e) f))
 
-(f arg_1 arg_2 ... arg_n)
+(f arg_1 arg_2 ... arg_n) ; apply a function f to args
 ```
 
 Very close to lambda Calculus
@@ -52,7 +52,6 @@ Very close to lambda Calculus
 Defining functions `def` + `fn` in ns
 
 ```clojure
-
 (defn say [x]
   (str "say: " x))
 

@@ -27,7 +27,5 @@
 (comment
   (build-start)
   (cljs-repl)
-
   :cljs/quit
   (stop-build))
-  ; (cljs-tooling.complete/completions cljs.repl "red" 'cljs.core))

@@ -3,18 +3,18 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.core.async :as async]))
 ```
-## Introduction to Clojure, a lispy Java
-_Andrea Amantini_
-- tw: @lo_zampino (@usenextjournal)
+# A friendly Introduction to Clojure: a lispy Java
+_Andrea Amantini_ (@usenextjournal)
+- tw: @lo_zampino
 - gh: @zampino (zampino/clojure-friendly)
 
-## Why Clojure
+## Why Clojure?
 
 * A dynamic language/environment (REPL driven dev)
 
 * a Lisp dialect
 
-* for Functional Programming, immutable Data Structures
+* for functional Programming, immutable Data Structures
 
 * symbiotic with an established Platform (JVM)
 
@@ -27,11 +27,13 @@ Rich Hickey, [Simple made Easy](https://www.infoq.com/presentations/Simple-Made-
 ### LIS(t) P(rocessor)
 > A programming system called LISP (for LISt Processor) has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T. The system was designed to facilitate experiments with a proposed system called the Advice Taker, whereby a machine could be instructed to handle declarative as well as imperative sentences and could exhibit “common sense” in carrying out its instructions...
 
-John McCarthy, [_Recursive Functions of Symbolic Expressions and Their Computation by Machine_, 1960](http://www-formal.stanford.edu/jmc/recursive.pdf)
-Paul Graham, [Roots of Lisp](http://paulgraham.com/rootsoflisp.html)
-[Differences to Clojure](https://clojure.org/reference/lisps)
+John McCarthy, [_Recursive Functions of Symbolic Expressions and Their Computation by Machine_, 1960](http://www-formal.stanford.edu/jmc/recursive.pdf) (see also Paul Graham, [Roots of Lisp](http://paulgraham.com/rootsoflisp.html))
 
-Try to give _common sense_ to expressions as
+> "we never formally teach the language, because we don’t have to. We just use it! ... the great advantage of Lisp-like languages [they have] ...very few ways of forming compound expressions, and almost no syntactic structure..."
+
+Abelson, Sussman, [SICP](https://web.mit.edu/alexmv/6.037/sicp.pdf)
+
+...give _common sense_ to expressions like
 
 ```clojure
 
@@ -61,7 +63,7 @@ Defining functions `def` + `fn` in ns
 (clojure-friendly/say hi)
 ```
 
-Clojure is omoiconic i.e. Data is Code is Data
+Code is Data, Data is Code
 
 ```clojure
 (+ 1 2 3)
@@ -71,7 +73,8 @@ Clojure is omoiconic i.e. Data is Code is Data
 (1 2 3)
 
 (eval '(+ 1 2 3))
-;; In Python thiw would be eval( parse "1 + 2 + 3")
+(eval (cons '+ '(1 2 3)))
+;; In Python thiw would be eval(compile("1 + 2 + 3", '<input>', 'eval'))
 ```
 See also https://clojure.org/reference/evaluation
 
@@ -162,10 +165,10 @@ See also https://nextjournal.com/zampino/fold
 
 (def coll
      [{:a 1}
-      {:a 2 :bad true}
+      {:a 2}
       {:a 3}
       {:a 4}
-      {:a 5 :stop :here}
+      {:a 5}
       {:a 6}
       {:a 7}])
 

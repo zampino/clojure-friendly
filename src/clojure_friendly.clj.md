@@ -1,14 +1,14 @@
 ```clojure
 (ns clojure-friendly
-    "A functional friendly Introduction to Clojure: a lispy Java"
+  "A functional friendly Introduction to Clojure: a lispy Java"
   ; (:require [high.confusion.threshold]
   ;           [some.programming.experience])
   (:require [clojure.spec.alpha :as s]
             [clojure.core.async :as async]))
 ```
 _Andrea Amantini_ ([@usenextjournal](https://twitter.com/usenextjournal))
-- tw: [@lo_zampino](https://twitter.com/lo_zampino)
-- gh: [@zampino](https://github.com/zampino) ([zampino/clojure-friendly](https://github.com/zampino/clojure-friendly))
+tw: [@lo_zampino](https://twitter.com/lo_zampino)
+gh: [@zampino](https://github.com/zampino) ([zampino/clojure-friendly](https://github.com/zampino/clojure-friendly))
 
 ## Why Clojure?
 
@@ -22,8 +22,7 @@ _Andrea Amantini_ ([@usenextjournal](https://twitter.com/usenextjournal))
 
 * designed for Concurrency
 
-Rich Hickey, _[Clojure rationale](https://clojure.org/about/rationale)_ or _[Simple made easy](https://www.infoq.com/presentations/Simple-Made-Easy)_ for inspiration
-
+Rich Hickey, _[Clojure Rationale](https://clojure.org/about/rationale)_
 ## LIS(t) P(rocessor)
 > LISP has been developed for the IBM 704 computer by the Artificial Intelligence group at M.I.T. to facilitate experiments with a proposed system called the Advice Taker, whereby a machine could be instructed to handle sentences and could exhibit “common sense” in carrying out its instructions...
 
@@ -181,7 +180,7 @@ See also https://nextjournal.com/zampino/fold
   (reduce (xf +) 0 coll))
 ```
 
-* Control Flow, Conditionals
+* Control Flow, Conditionals, Recursion (no tail call optimization in Java)
 
 ```clojure
 (if true :ok :ko)
@@ -195,6 +194,15 @@ See also https://nextjournal.com/zampino/fold
   (cond-> {:a 1}
     p1 (assoc :b 2)
     p2 (assoc :c 3)))
+
+(defn recall [n]
+  (cond
+    (odd? n) n
+    (< n 10) (recur (+ n 2))
+    (= n 10) :ok
+    (> n 10) :ko))
+
+(recall 2)
 ```
 
 * Polymorphism (multi-methods, records, protocols)
@@ -336,20 +344,6 @@ ja
 (s/conform ::object.now object)
 (s/conform ::object.now object')
 (s/explain-data ::object.now object')
-
-```
-
-* Recur (no tail call optimization in Java)
-
-```clojure
-
-(defn recall [n]
-  (cond
-    (odd? n) n
-    (< n 10) (recur (+ n 2))
-    (= n 10) :ok))
-
-(recall 2)
 
 ```
 

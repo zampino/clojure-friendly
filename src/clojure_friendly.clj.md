@@ -66,8 +66,8 @@ Code is Data, Data is Code
 ```clojure
 (+ 1 2 3)
 
-; quote to make code inert
-(list?  '(+ 1 2 3))
+; use quote to make code inert
+(list? '(+ 1 2 3))
 
 (1 2 3)
 
@@ -258,6 +258,8 @@ ja
 
 ```clojure
 (def store (atom []))
+
+(swap! store conj :a)
 (deref store) ; (@store)
 
 (defn add [store input]
@@ -287,6 +289,7 @@ ja
 ```
 
 * Concurrency (Delays, Futures, Promises, core.async CSP)
+
 ```clojure
 
 (def c (async/chan))
@@ -317,7 +320,7 @@ ja
 (s/def ::object (s/keys :req [::name ::seq]))
 
 (def object {::name "a@b.c"
-             ::seq (list 3 15 1 3])
+             ::seq (list 3 15 1 3)})
 
 (s/valid? ::object object)
 

@@ -1,5 +1,4 @@
 ```clojure
-
 (ns clojure-friendly
   "A functional friendly Introduction to Clojure: a lispy Java"
   ; (:require [high.confusion.threshold]
@@ -54,6 +53,7 @@ Abelson, Sussman, [_SICP_, book/course 6.037 MIT](https://web.mit.edu/alexmv/6.0
 (def hi "Hello Clojure 👋")
 
 (def say (fn [x] (str "say: " x)))
+(defn say [x] (str "say: " x))
 
 (say hi)
 
@@ -114,7 +114,7 @@ See also https://clojure.org/reference/evaluation and https://clojure.org/refere
 ; sequential collections
 (def a-vector [:a :b :c 1 "foo"])
 
-(def a-list '(:a :b :c 1 "foo"))
+(def a-list (list :a :b :c 1 "foo"))
 
 ; hashed collections
 (def a-map {:a 1  :b 2  "foo" 3})
@@ -125,7 +125,7 @@ See also https://clojure.org/reference/evaluation and https://clojure.org/refere
 
 (a-map :a)
 
-(assoc a-map :d 4)
+(def a-map' (assoc a-map :d 4 :e 5))
 ; 🚨  immutably 🚨
 
 a-map
@@ -145,6 +145,7 @@ a-map
 (get-in    m [:a 2 :foo])
 
 (update-in m [:a 2 :foo] inc)
+m
 
 (conj a-vector "bar")
 (conj a-list   "bar")
@@ -162,6 +163,7 @@ a-map
 (java.util.Date.)
 (java.util.UUID/randomUUID)
 
+(com.vdurmont.emoji.EmojiManager/getAll)
 ;  🤭  mutable?! 🤭
 (def ja (java.util.ArrayList.))
 (.add ja 1)
@@ -194,7 +196,10 @@ ja
 
 (reduce + 0 (filter odd? (map :a coll)))
 
-(def xf (map :a))
+(def xf (comp
+          (remove :bad)
+          (map :a)
+          (filter odd?)))
 
 (reduce (xf +) 0 coll)
 

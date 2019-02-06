@@ -8,7 +8,7 @@
 ```
 _Andrea Amantini_ ([@usenextjournal](https://twitter.com/usenextjournal))
 tw: [@lo_zampino](https://twitter.com/lo_zampino)
-gh: [@zampino](https://github.com/zampino) ([zampino/clojure-friendly](https://github.com/zampino/clojure-friendly))
+gh: [@zampino](https://github.com/zampino) ([zampino/clojure-friendly](https://github.com/zampino/clojure-friendly/blob/master/src/clojure_friendly.clj.md))
 
 ## Why Clojure?
 
@@ -143,18 +143,21 @@ a-map
 
 (get-in    m [:a 2 :foo])
 
-(update-in m [:a 2 :foo] + 100)
+(update-in m [:a 2 :foo] inc)
 
 (conj a-vector "bar")
 (conj a-list "foo")
 (conj a-set 1)
 
+(into [1 2 3] #{:a :b :c})
+(into [1 2 3] '(:a :b :c :d))
+(into '(1 2 3) [:a :b :c])
 ```
 
 * Operation on Collections / Fold Fusion (Transducers)
-See also https://nextjournal.com/zampino/fold
 
 ```clojure
+
 (def coll
      [{:a 1}
       {:a 2}
@@ -164,21 +167,26 @@ See also https://nextjournal.com/zampino/fold
       {:a 6}
       {:a 7}])
 
-(filter odd?
-        (map :a coll))
+(map :a coll)
+
+(filter odd? (map :a coll))
+
+; reduce (fold)
 
 (reduce + 0 [1 2 3 4])
 
+(reduce + 0 (map :a coll))
+
 (reduce + 0 (filter odd? (map :a coll)))
 
-(let [xf (comp
-           (remove :bad)
-           (take-while (comp not :stop))
-           (map :a))]
-           ; (filter odd?))]
+(def xf (map :a))
 
-  (reduce (xf +) 0 coll))
+(reduce (xf +) 0 coll)
+
+(into [] xf coll)
 ```
+See also https://nextjournal.com/zampino/fold
+
 
 * Control Flow, Conditionals, Recursion (no tail call optimization in Java)
 
@@ -265,6 +273,13 @@ ja
 * Safe State Mutation (Vars, Atoms, Refs, Agents)
 
 ```clojure
+
+(def ^:dynamic *my-var* 1)
+
+(defn foo [x] (+ x *my-var*))
+
+(binding [*my-var* 3] (foo 2))
+
 (def store (atom []))
 
 (swap! store conj :a)

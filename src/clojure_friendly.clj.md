@@ -1,4 +1,5 @@
 ```clojure
+
 (ns clojure-friendly
   "A functional friendly Introduction to Clojure: a lispy Java"
   ; (:require [high.confusion.threshold]
@@ -37,32 +38,32 @@ Abelson, Sussman, [_SICP_, book/course 6.037 MIT](https://web.mit.edu/alexmv/6.0
 
 ```clojure
 
+
 ((a b) (c (d e) f))
 
+
 (f arg_1 arg_2 ... arg_n) ; apply a function f to args
+
 ```
 
-Very close to lambda Calculus
+* Definitions
 
 ```clojure
-((fn [x] (+ x 1))  y)   ; --β--> (+ x y)
-```
 
-Defining named functions `def` + `fn` in a namespace
-
-```clojure
-(defn say [x] (str "say: " x))
 
 (def hi "Hello Clojure 👋")
+
+(def say (fn [x] (str "say: " x)))
 
 (say hi)
 
 (clojure-friendly/say hi)
 ```
 
-Code is Data, Data is Code
+* Code is Data, Data is Code
 
 ```clojure
+
 (+ 1 2 3)
 
 ; use quote to make code inert
@@ -87,7 +88,7 @@ See also https://clojure.org/reference/evaluation and https://clojure.org/refere
 ((λ x (+ x 1)) 2)
 ```
 
-* Functions are first class
+* Functions are first-class
 
 ```clojure
 
@@ -110,15 +111,15 @@ See also https://clojure.org/reference/evaluation and https://clojure.org/refere
 * Immutability / Navigation / Transformations of Data Structures
 
 ```clojure
-; sequential colls
+; sequential collections
 (def a-vector [:a :b :c 1 "foo"])
 
 (def a-list '(:a :b :c 1 "foo"))
 
-; hashed colls
-(def a-map {:a 1 :b 2 "foo" 3})
+; hashed collections
+(def a-map {:a 1  :b 2  "foo" 3})
 
-(def a-set #{:a :b :c :d :e})
+(def a-set #{1 2 3 4 :foo :bar})
 
 (:a a-map)
 
@@ -136,7 +137,7 @@ a-map
 
 (-> a-map
     (assoc :a 3)
-    (assoc :b 0)
+    (dissoc :b)
     (assoc :c 2))
 
 (def m {:a [1 2 {:foo 3} 4]})
@@ -146,12 +147,26 @@ a-map
 (update-in m [:a 2 :foo] inc)
 
 (conj a-vector "bar")
-(conj a-list "foo")
-(conj a-set 1)
+(conj a-list   "bar")
+(conj a-set    "bar")
 
 (into [1 2 3] #{:a :b :c})
 (into [1 2 3] '(:a :b :c :d))
 (into '(1 2 3) [:a :b :c])
+```
+
+* Java Interop
+
+```clojure
+
+(java.util.Date.)
+(java.util.UUID/randomUUID)
+
+;  🤭  mutable?! 🤭
+(def ja (java.util.ArrayList.))
+(.add ja 1)
+ja
+(type ja)
 ```
 
 * Operation on Collections / Fold Fusion (Transducers)
@@ -185,10 +200,10 @@ a-map
 
 (into [] xf coll)
 ```
+
 See also https://nextjournal.com/zampino/fold
 
-
-* Control Flow, Conditionals, Recursion (no tail call optimization in Java)
+* Control Flow (Conditionals, Recursion (no tail call optimization in Java))
 
 ```clojure
 (if true :ok :ko)
@@ -203,37 +218,44 @@ See also https://nextjournal.com/zampino/fold
     p1 (assoc :b 2)
     p2 (assoc :c 3)))
 
-(defn recall [n]
+(defn reach-max-10-when-even [n]
   (cond
     (odd? n) n
     (< n 10) (recur (+ n 2))
     (= n 10) :ok
     (> n 10) :ko))
 
-(recall 2)
+(reach-max-10-when-even 12)
 ```
 
 * Polymorphism (multi-methods, records, protocols)
 
 ```clojure
-(defmulti handle :event)
+(defmulti handle (fn [context event] (:kind event)))
 
-(defmethod handle "up"    [event]
-  (update event :value inc))
-(defmethod handle "down"  [event]
-  (update event :value dec))
-(defmethod handle "clear" [event]
-  (assoc event :value 0))
+(defmethod handle "up" [context event]
+  (update context :value inc))
+
+(defmethod handle "down" [context event]
+  (update context :value dec))
+
+(defmethod handle "add" [context event]
+  (update context :content str (:content event)))
 
 (def context
-  {:event "up"
-   :ns2/type "section"
-   :content "hello"
+  {:content "hello"
    :value 1})
 
-(handle context)
+(-> context
+    (handle {:kind "up"})
+    (handle {:kind "down"})
+    (handle {:kind "up"})
+    (handle {:kind "up"})
+    (handle {:kind "add" :content " clojure"}))
 
-;; context (map) overloading
+
+;; context (map) overloading, namespaced keys
+
 (-> context
     (ns1/transform input-1)
     (ns2/transform input-2)
@@ -249,25 +271,14 @@ See also https://nextjournal.com/zampino/fold
 ```clojure
 
 (def a (with-meta [1 2 3] {:safe true}))
+
 (def b {:a a :b 1})
+
 (-> b
     (update :a conj 4)
     (get :a)
     meta)
-```
 
-* Java Interop
-
-```clojure
-
-(java.util.Date.)
-(java.util.UUID/randomUUID)
-
-;  🤭  mutable?! 🤭
-(def ja (java.util.ArrayList.))
-(.add ja 1)
-ja
-(type ja)
 ```
 
 * Safe State Mutation (Vars, Atoms, Refs, Agents)
@@ -283,6 +294,7 @@ ja
 (def store (atom []))
 
 (swap! store conj :a)
+
 (deref store) ; (@store)
 
 (defn add [store input]
@@ -316,14 +328,18 @@ ja
 ```clojure
 
 (def c (async/chan))
+
 (async/go
   (loop [state []]
     (if-some [val (async/<! c)]
+
       (do (println "Message In: " val)
           (recur (conj state val)))
+
       (println "Go Loop Done! " state))))
 
-(async/go (async/>! c :there))
+(async/go (async/>! c :msg))
+
 (async/close! c)
 ```
 
@@ -332,9 +348,7 @@ ja
 * Clojure Spec Alpha
 
 ```clojure
-(s/def ::name (s/and string?
-                     (s/conformer clojure.string/reverse
-                                  clojure.string/reverse)))
+(s/def ::name (s/and string?))
 
 (s/def ::code (s/and integer? odd?))
 
@@ -348,7 +362,6 @@ ja
 (s/valid? ::object object)
 
 (s/def ::object.new (s/keys :req [::name
-                                  ::seq
                                   ::code]))
 
 (s/def ::object.now (s/or :v2 ::object.new

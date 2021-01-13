@@ -43,6 +43,8 @@ Abelson, Sussman, [_SICP_, book/course 6.037 MIT](https://web.mit.edu/alexmv/6.0
 
 (f arg_1 arg_2 ... arg_n) ; apply a function f to args
 
+
+((fn [x y ] (+ 1 2 4 x y )) 5 6)
 ```
 
 * Definitions
@@ -66,8 +68,10 @@ Abelson, Sussman, [_SICP_, book/course 6.037 MIT](https://web.mit.edu/alexmv/6.0
 
 (+ 1 2 3)
 
-; use quote to make code inert
-(list? '(+ 1 2 3))
+; use quote to make code inert (a list of symbols)
+'(+ 1 2 3)
+
+(type '(+ 1 2 3))
 
 (1 2 3)
 
@@ -76,6 +80,7 @@ Abelson, Sussman, [_SICP_, book/course 6.037 MIT](https://web.mit.edu/alexmv/6.0
 (eval (cons '+ '(1 2 3)))
 
 ;; In Python this would be eval(compile("1 + 2 + 3", '<input>', 'eval'))
+
 ```
 See also https://clojure.org/reference/evaluation and https://clojure.org/reference/reader
 
@@ -100,9 +105,7 @@ See also https://clojure.org/reference/evaluation and https://clojure.org/refere
 ((partial + 41) 1)
 
 (def p (every-pred odd?
-                   (comp ; is a multiple of 3?
-                     (partial = 0)
-                     (fn [n] (mod n 3)))))
+                   (fn [n] (= 0 (mod n 3)))))
 (p 2)
 (p 5)
 (p 9)
@@ -167,7 +170,8 @@ m
 ;  🤭  mutable?! 🤭
 (def ja (java.util.ArrayList.))
 (.add ja 1)
-ja
+(.add ja 2)
+(println ja)
 (type ja)
 ```
 
